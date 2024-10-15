@@ -40,7 +40,14 @@ export default class CompareHands {
   }
 
   static isFourOfAKind(hand) { // TODO!
+    let rankCounts = this.sortByRank(hand);
+    for (let rank in rankCounts) {
+      if (rankCounts[rank] === 4) {
+        return this.sortByRank(rank) * 4;
+      } 
+    }
     return 0;
+    
   }
 
   static isFullHouse(hand) { // TODO!
@@ -84,9 +91,19 @@ export default class CompareHands {
     return this.rankToPoint(ranks[4]);
   }
 
-  static isThreeOfAKind(hand) { // TODO!
-    return 0;
+  
+  static isThreeOfAKind(hand) {
+    let rankCounts = this.rankToPoint(hand); // Räkna upp kortens rang
+
+    for (let rank in rankCounts) {
+      if (rankCounts[rank] === 3) {
+        return this.rankToPoint(rank) * 3; // Returnera poängen för tre av samma rang
+      }
+    }
+
+    return 0; // Ingen Three of a Kind hittades
   }
+
 
   static isTwoPair(hand) { // TODO!
     return 0;
@@ -96,8 +113,10 @@ export default class CompareHands {
     return 0;
   }
 
-  static isHighestCard(hand) { // TODO!
-    return 0;
+
+  static isHighestCard(hand) {
+    this.sortByRank(hand);
+    return this.rankToPoint(hand.cards[hand.cards.length - 1].rank); // Return the highest card's value
   }
 
   // helper functions below:
@@ -115,3 +134,4 @@ export default class CompareHands {
 
 
 }
+
