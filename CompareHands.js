@@ -39,20 +39,48 @@ export default class CompareHands {
     return this.isStraight(hand) && this.isFlush(hand);
   }
 
-  static isFourOfAKind(hand) { // TODO!
-    let rankCounts = this.sortByRank(hand);
+  static isFourOfAKind(hand) {
+    const rankCounts = {};
+
+    // Räkna antalet kort per rang
+    for (let card of hand.cards) {
+      rankCounts[card.rank] = (rankCounts[card.rank] || 0) + 1;
+    }
+
+    // Kontrollera om det finns fyra kort med samma rang
     for (let rank in rankCounts) {
       if (rankCounts[rank] === 4) {
-        return this.sortByRank(rank) * 4;
-      } 
+        return this.rankToPoint(rank) * 4; // Returnera poängen för fyra av samma rang
+      }
     }
-    return 0;
-    
+
+    return 0; // Ingen Four of a Kind hittades
   }
 
-  static isFullHouse(hand) { // TODO!
-    return 0;
+
+  static isFullHouse(hand) {
+    const rankCounts = {};
+
+    // Räkna antalet kort per rang
+    for (let card of hand.cards) {
+      rankCounts[card.rank] = (rankCounts[card.rank] || 0) + 1;
+    }
+
+    let hasThree = false;
+    let hasTwo = false;
+
+    // Kontrollera om det finns en rang med tre och en rang med två
+    for (let count of Object.values(rankCounts)) {
+      if (count === 3) {
+        hasThree = true;
+      } else if (count === 2) {
+        hasTwo = true;
+      }
+    }
+
+    return (hasThree && hasTwo) ? 1 : 0; // Returnera 1 om det finns både tre och två, annars 0
   }
+
 
   static isFlush(hand) {
     let suits = [];
@@ -93,8 +121,14 @@ export default class CompareHands {
 
   
   static isThreeOfAKind(hand) {
-    let rankCounts = this.rankToPoint(hand); // Räkna upp kortens rang
+    const rankCounts = {};
 
+    // Räkna antalet kort per rang
+    for (let card of hand.cards) {
+      rankCounts[card.rank] = (rankCounts[card.rank] || 0) + 1;
+    }
+
+    // Kontrollera om det finns tre kort med samma rang
     for (let rank in rankCounts) {
       if (rankCounts[rank] === 3) {
         return this.rankToPoint(rank) * 3; // Returnera poängen för tre av samma rang
@@ -105,18 +139,53 @@ export default class CompareHands {
   }
 
 
-  static isTwoPair(hand) { // TODO!
-    return 0;
+  static isTwoPair(hand) {
+    const rankCounts = {};
+
+    // Räkna antalet kort per rang
+    for (let card of hand.cards) {
+      rankCounts[card.rank] = (rankCounts[card.rank] || 0) + 1;
+    }
+
+    let pairs = 0;
+
+    // Kontrollera antalet par
+    for (let count of Object.values(rankCounts)) {
+      if (count === 2) {
+        pairs++;
+      }
+    }
+
+    return pairs === 2 ? 1 : 0; // Returnera 1 om det finns exakt två par, annars 0
   }
 
-  static isOnePair(hand) { // TODO!
-    return 0;
+
+  static isOnePair(hand) {
+    const rankCounts = {};
+
+    // Räkna antalet kort per rang
+    for (let card of hand.cards) {
+      rankCounts[card.rank] = (rankCounts[card.rank] || 0) + 1;
+    }
+
+    let hasPair = false;
+
+    // Kontrollera om det finns ett par
+    for (let count of Object.values(rankCounts)) {
+      if (count === 2) {
+        hasPair = true;
+        break; // Ingen anledning att fortsätta om vi redan har ett par
+      }
+    }
+
+    return hasPair ? 1 : 0; // Returnera 1 om det finns ett par, annars 0
   }
+
 
 
   static isHighestCard(hand) {
     this.sortByRank(hand);
-    return this.rankToPoint(hand.cards[hand.cards.length - 1].rank); // Return the highest card's value
+    return this.rankToPoint(hand.cards[hand.cards.length - 1].rank); // Returnera högsta kortets värde
   }
 
   // helper functions below:
